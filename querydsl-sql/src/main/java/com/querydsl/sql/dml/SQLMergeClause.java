@@ -15,9 +15,9 @@ package com.querydsl.sql.dml;
 
 import java.sql.*;
 import java.util.*;
+import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
-import javax.inject.Provider;
 
 import com.querydsl.core.util.CollectionUtils;
 import org.slf4j.Logger;
@@ -71,7 +71,7 @@ public class SQLMergeClause extends AbstractSQLClause<SQLMergeClause> implements
         metadata.addJoin(JoinType.DEFAULT, entity);
     }
 
-    public SQLMergeClause(Provider<Connection> connection, Configuration configuration, RelationalPath<?> entity) {
+    public SQLMergeClause(Supplier<Connection> connection, Configuration configuration, RelationalPath<?> entity) {
         super(configuration, connection);
         this.entity = entity;
         metadata.addJoin(JoinType.DEFAULT, entity);

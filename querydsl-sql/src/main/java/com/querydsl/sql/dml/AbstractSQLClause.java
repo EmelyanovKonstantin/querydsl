@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
-import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.MDC;
@@ -51,7 +51,7 @@ public abstract class AbstractSQLClause<C extends AbstractSQLClause<C>> implemen
     protected SQLListenerContextImpl context;
 
     @Nullable
-    private Provider<Connection> connProvider;
+    private Supplier<Connection> connProvider;
 
     @Nullable
     private Connection conn;
@@ -62,7 +62,7 @@ public abstract class AbstractSQLClause<C extends AbstractSQLClause<C>> implemen
         this.useLiterals = configuration.getUseLiterals();
     }
 
-    public AbstractSQLClause(Configuration configuration, Provider<Connection> connProvider) {
+    public AbstractSQLClause(Configuration configuration, Supplier<Connection> connProvider) {
         this(configuration);
         this.connProvider = connProvider;
     }

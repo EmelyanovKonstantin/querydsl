@@ -23,9 +23,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
-import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,7 @@ public abstract class AbstractSQLQuery<T, Q extends AbstractSQLQuery<T, Q>> exte
     private static final QueryFlag rowCountFlag = new QueryFlag(QueryFlag.Position.AFTER_PROJECTION, ", count(*) over() ");
 
     @Nullable
-    private Provider<Connection> connProvider;
+    private Supplier<Connection> connProvider;
 
     @Nullable
     private Connection conn;
@@ -85,11 +85,11 @@ public abstract class AbstractSQLQuery<T, Q extends AbstractSQLQuery<T, Q>> exte
         this.useLiterals = configuration.getUseLiterals();
     }
 
-    public AbstractSQLQuery(Provider<Connection> connProvider, Configuration configuration) {
+    public AbstractSQLQuery(Supplier<Connection> connProvider, Configuration configuration) {
         this(connProvider, configuration, new DefaultQueryMetadata());
     }
 
-    public AbstractSQLQuery(Provider<Connection> connProvider, Configuration configuration, QueryMetadata metadata) {
+    public AbstractSQLQuery(Supplier<Connection> connProvider, Configuration configuration, QueryMetadata metadata) {
         super(new QueryMixin<Q>(metadata, false), configuration);
         this.connProvider = connProvider;
         this.listeners = new SQLListeners(configuration.getListeners());

@@ -17,9 +17,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Range;
-import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ public abstract class AbstractSQLDeleteClause<C extends AbstractSQLDeleteClause<
         metadata.setValidatingVisitor(validatingVisitor);
     }
 
-    public AbstractSQLDeleteClause(Provider<Connection> connection, Configuration configuration, RelationalPath<?> entity) {
+    public AbstractSQLDeleteClause(Supplier<Connection> connection, Configuration configuration, RelationalPath<?> entity) {
         super(configuration, connection);
         this.entity = entity;
         metadata.addJoin(JoinType.DEFAULT, entity);
