@@ -13,7 +13,11 @@
  */
 package com.querydsl.core.group;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
+
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 class GOne<T> extends AbstractGroupExpression<T, T> {
 
@@ -22,6 +26,14 @@ class GOne<T> extends AbstractGroupExpression<T, T> {
     @SuppressWarnings("unchecked")
     public GOne(Expression<T> expr) {
         super((Class) expr.getType(), expr);
+    }
+
+    @Override
+    public Collector<Tuple, ?, T> collector() {
+        return Collectors.collectingAndThen(
+                Collectors.mapping(tuple -> tuple.get(getExpression()),
+                Collectors.reducing((a, b) -> { throw new IllegalArgumentException(""); })),
+                a -> a.orElse(null));
     }
 
     @Override

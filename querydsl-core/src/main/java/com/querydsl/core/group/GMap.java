@@ -14,8 +14,11 @@
 package com.querydsl.core.group;
 
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.mysema.commons.lang.Pair;
+import com.querydsl.core.Tuple;
 
 abstract class GMap<K, V, M extends Map<K,V>> extends AbstractGroupExpression<Pair<K, V>, M> {
 
@@ -55,6 +58,16 @@ abstract class GMap<K, V, M extends Map<K,V>> extends AbstractGroupExpression<Pa
     }
 
     @Override
+    public Collector<Tuple, ?, M> collector() {
+        return Collectors.toMap(
+                tuple -> tuple.get(getExpression()).getFirst(),
+                tuple -> tuple.get(getExpression()).getSecond(),
+                (a, b) -> a,
+                this::createMap
+        );
+    }
+
+    @Override
     public GroupCollector<Pair<K,V>, M> createGroupCollector() {
         return new GroupCollector<Pair<K,V>, M>() {
 
@@ -73,7 +86,7 @@ abstract class GMap<K, V, M extends Map<K,V>> extends AbstractGroupExpression<Pa
         };
     }
 
-    static class Mixin<K, V, T, U, R extends Map<? super T, ? super U>> extends AbstractGroupExpression<Pair<K, V>, R> {
+    static class Mixin<K, V, T, U, R extends Map<T, U>> extends AbstractGroupExpression<Pair<K, V>, R> {
 
         private static final long serialVersionUID = 1939989270493531116L;
 
@@ -121,17 +134,32 @@ abstract class GMap<K, V, M extends Map<K,V>> extends AbstractGroupExpression<Pa
 
         }
 
-        private final GroupExpression<Pair<T, U>, R> mixin;
+        private final GMap<T, U, R> mixin;
 
         private final GroupExpression<K, T> keyExpression;
         private final GroupExpression<V, U> valueExpression;
 
         @SuppressWarnings({ "rawtypes", "unchecked" })
-        public Mixin(GroupExpression<K, T> keyExpression, GroupExpression<V, U> valueExpression, AbstractGroupExpression<Pair<T, U>, R> mixin) {
+        public Mixin(GroupExpression<K, T> keyExpression, GroupExpression<V, U> valueExpression, GMap<T, U, R> mixin) {
             super((Class) mixin.getType(), QPair.create(keyExpression.getExpression(), valueExpression.getExpression()));
             this.keyExpression = keyExpression;
             this.valueExpression = valueExpression;
             this.mixin = mixin;
+        }
+
+        @Override
+        public Collector<Tuple, ?, R> collector() {
+//            return Collectors.toMap(
+//                    tuple -> tuple.get(getExpression()).getFirst(),
+//                    tuple -> tuple.get(getExpression()).getSecond(),
+//                    (a, b) -> a,
+//                    this::createMap
+//            );
+            return Collectors.groupingBy(
+                    tuple -> tuple.get(keyExpression),
+                    mixin::createMap,
+                    valueExpression.collector()
+            );
         }
 
         @Override

@@ -13,7 +13,10 @@
  */
 package com.querydsl.core.group;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
+
+import java.util.stream.Collector;
 
 /**
  * Defines the way results of a given expression are grouped. GroupExpressions are also used
@@ -35,6 +38,8 @@ public interface GroupExpression<T, R> extends Expression<R> {
      * @return wrapped expression
      */
     Expression<T> getExpression();
+
+    Collector<Tuple, ?, R> collector();
 
     /**
      * Create a new GroupCollector to collect values belonging to this group.

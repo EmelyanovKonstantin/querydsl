@@ -14,7 +14,10 @@
 package com.querydsl.core.group;
 
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 
 abstract class GSet<T, S extends Set<T>> extends AbstractGroupExpression<T, S> {
@@ -53,6 +56,11 @@ abstract class GSet<T, S extends Set<T>> extends AbstractGroupExpression<T, S> {
     }
 
     protected abstract S createSet();
+
+    @Override
+    public Collector<Tuple, ?, S> collector() {
+        return Collectors.mapping(tuple -> tuple.get(getExpression()), Collectors.toCollection(this::createSet));
+    }
 
     @Override
     public GroupCollector<T, S> createGroupCollector() {

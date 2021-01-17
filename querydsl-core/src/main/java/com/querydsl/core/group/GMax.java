@@ -13,7 +13,12 @@
  */
 package com.querydsl.core.group;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
+
+import java.util.Comparator;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 class GMax<T extends Comparable<? super T>> extends AbstractGroupExpression<T, T> {
 
@@ -22,6 +27,12 @@ class GMax<T extends Comparable<? super T>> extends AbstractGroupExpression<T, T
     @SuppressWarnings("unchecked")
     public GMax(Expression<T> expr) {
         super((Class) expr.getType(), expr);
+    }
+
+    @Override
+    public Collector<Tuple, ?, T> collector() {
+        throw new UnsupportedOperationException();
+//        return Collectors.mapping(tuple -> tuple.get(getExpression()), Collectors.collectingAndThen(Collectors.maxBy(Comparator.naturalOrder()), o -> o.orElse(null)));
     }
 
     @Override

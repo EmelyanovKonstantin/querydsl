@@ -13,6 +13,10 @@
  */
 package com.querydsl.core.group;
 
+import com.querydsl.core.Tuple;
+
+import java.util.stream.Collector;
+
 /**
  * {@code MixinGroupExpression} provides nesting support for {@link GroupExpression} instances
  *
@@ -64,6 +68,11 @@ public class MixinGroupExpression<E, F, R> extends AbstractGroupExpression<E, R>
         super((Class) mixin.getType(), groupExpression.getExpression());
         this.mixin = mixin;
         this.groupExpression = groupExpression;
+    }
+
+    @Override
+    public Collector<Tuple, ?, R> collector() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

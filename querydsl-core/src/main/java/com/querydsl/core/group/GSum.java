@@ -14,7 +14,10 @@
 package com.querydsl.core.group;
 
 import java.math.BigDecimal;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.util.MathUtils;
 
@@ -25,6 +28,11 @@ class GSum<T extends Number> extends AbstractGroupExpression<T, T> {
     @SuppressWarnings("unchecked")
     public GSum(Expression<T> expr) {
         super((Class) expr.getType(), expr);
+    }
+
+    @Override
+    public Collector<Tuple, ?, T> collector() {
+        return Collectors.collectingAndThen(Collectors.summingDouble(tuple -> tuple.get(getExpression()).doubleValue()), sum -> MathUtils.cast(sum, getType()));
     }
 
     @Override

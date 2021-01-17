@@ -15,7 +15,10 @@ package com.querydsl.core.group;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 
 class GList<T> extends AbstractGroupExpression<T, List<T>> {
@@ -24,6 +27,11 @@ class GList<T> extends AbstractGroupExpression<T, List<T>> {
 
     public GList(Expression<T> expr) {
         super(List.class, expr);
+    }
+
+    @Override
+    public Collector<Tuple, ?, List<T>> collector() {
+        return Collectors.mapping(tuple -> tuple.get(getExpression()), Collectors.toList());
     }
 
     @Override

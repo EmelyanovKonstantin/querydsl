@@ -14,7 +14,10 @@
 package com.querydsl.core.group;
 
 import java.math.BigDecimal;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.util.MathUtils;
 
@@ -25,6 +28,13 @@ class GAvg<T extends Number> extends AbstractGroupExpression<T, T> {
 
     public GAvg(Expression<T> expr) {
         super((Class) expr.getType(), expr);
+    }
+
+    @Override
+    public Collector<Tuple, ?, T> collector() {
+        return Collectors.collectingAndThen(
+                Collectors.averagingDouble(e -> e.get(getExpression()).doubleValue()),
+                e -> MathUtils.cast(e, getType()));
     }
 
     @Override
